@@ -14,6 +14,7 @@ import { Route as ChatbotRouteImport } from './routes/chatbot'
 import { Route as EmailGeneratorRouteImport } from './routes/email-generator'
 import { Route as MeetingNotesRouteImport } from './routes/meeting-notes'
 import { Route as ResearchAssistantRouteImport } from './routes/research-assistant'
+import { Route as ResponsibleAiRouteImport } from './routes/responsible-ai'
 import { Route as TaskPlannerRouteImport } from './routes/task-planner'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const ResearchAssistantRoute = ResearchAssistantRouteImport.update({
   path: '/research-assistant',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResponsibleAiRoute = ResponsibleAiRouteImport.update({
+  id: '/responsible-ai',
+  path: '/responsible-ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TaskPlannerRoute = TaskPlannerRouteImport.update({
   id: '/task-planner',
   path: '/task-planner',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/email-generator': typeof EmailGeneratorRoute
   '/meeting-notes': typeof MeetingNotesRoute
   '/research-assistant': typeof ResearchAssistantRoute
+  '/responsible-ai': typeof ResponsibleAiRoute
   '/task-planner': typeof TaskPlannerRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/email-generator': typeof EmailGeneratorRoute
   '/meeting-notes': typeof MeetingNotesRoute
   '/research-assistant': typeof ResearchAssistantRoute
+  '/responsible-ai': typeof ResponsibleAiRoute
   '/task-planner': typeof TaskPlannerRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/email-generator': typeof EmailGeneratorRoute
   '/meeting-notes': typeof MeetingNotesRoute
   '/research-assistant': typeof ResearchAssistantRoute
+  '/responsible-ai': typeof ResponsibleAiRoute
   '/task-planner': typeof TaskPlannerRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/email-generator'
     | '/meeting-notes'
     | '/research-assistant'
+    | '/responsible-ai'
     | '/task-planner'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/email-generator'
     | '/meeting-notes'
     | '/research-assistant'
+    | '/responsible-ai'
     | '/task-planner'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/email-generator'
     | '/meeting-notes'
     | '/research-assistant'
+    | '/responsible-ai'
     | '/task-planner'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   EmailGeneratorRoute: typeof EmailGeneratorRoute
   MeetingNotesRoute: typeof MeetingNotesRoute
   ResearchAssistantRoute: typeof ResearchAssistantRoute
+  ResponsibleAiRoute: typeof ResponsibleAiRoute
   TaskPlannerRoute: typeof TaskPlannerRoute
 }
 
@@ -145,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResearchAssistantRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/responsible-ai': {
+      id: '/responsible-ai'
+      path: '/responsible-ai'
+      fullPath: '/responsible-ai'
+      preLoaderRoute: typeof ResponsibleAiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/task-planner': {
       id: '/task-planner'
       path: '/task-planner'
@@ -161,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmailGeneratorRoute: EmailGeneratorRoute,
   MeetingNotesRoute: MeetingNotesRoute,
   ResearchAssistantRoute: ResearchAssistantRoute,
+  ResponsibleAiRoute: ResponsibleAiRoute,
   TaskPlannerRoute: TaskPlannerRoute,
 }
 export const routeTree = rootRouteImport
