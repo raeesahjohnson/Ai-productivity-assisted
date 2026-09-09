@@ -30,7 +30,7 @@ const systemNav: NavItem[] = [
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 
-function NavLink({ item, onNavigate }: { item: NavItem; onNavigate?: () => void }) {
+function NavLink({ item, onNavigate }: { item: NavItem; onNavigate?: (() => void) | undefined }) {
   const Icon = item.icon;
   return (
     <Link
@@ -48,7 +48,7 @@ function NavLink({ item, onNavigate }: { item: NavItem; onNavigate?: () => void 
   );
 }
 
-function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
+function SidebarContent({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
   return (
     <>
       <div className="flex h-16 items-center gap-2.5 border-b border-border px-5">
