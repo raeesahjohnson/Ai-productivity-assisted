@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ToolPage } from "@/components/tool-page";
+import { ToolRunner } from "@/components/tool-runner";
 import { getTool } from "@/lib/tools";
 
 const tool = getTool("task-planner");
@@ -19,5 +19,5 @@ export const Route = createFileRoute("/task-planner")({
       },
     ],
   }),
-  component: () => <ToolPage tool={tool} />,
+  component: () => <ToolRunner tool={tool} />,
 });

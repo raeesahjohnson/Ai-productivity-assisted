@@ -1,23 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { ToolPage } from "@/components/tool-page";
+import { ToolRunner } from "@/components/tool-runner";
 import { getTool } from "@/lib/tools";
-import { generateEmail } from "@/lib/ai.functions";
 
 const tool = getTool("email-generator");
-
-function EmailGeneratorPage() {
-  const run = useServerFn(generateEmail);
-  return (
-    <ToolPage
-      tool={tool}
-      generate={async (brief) => {
-        const result = await run({ data: { brief } });
-        return result.text;
-      }}
-    />
-  );
-}
 
 export const Route = createFileRoute("/email-generator")({
   head: () => ({
@@ -34,5 +19,5 @@ export const Route = createFileRoute("/email-generator")({
       },
     ],
   }),
-  component: EmailGeneratorPage,
+  component: () => <ToolRunner tool={tool} />,
 });
