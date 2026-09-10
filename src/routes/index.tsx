@@ -213,6 +213,8 @@ function Dashboard() {
       <p className="mt-10 text-center text-xs text-muted-foreground">
         WorkOS AI · Placeholder pages pending feature build
       </p>
+
+      <CustomToolDialog open={customOpen} onOpenChange={setCustomOpen} />
     </div>
   );
 }
