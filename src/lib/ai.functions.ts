@@ -55,6 +55,95 @@ const PROMPTS: Record<(typeof SLUGS)[number], string> = {
   ].join(" "),
 };
 
+const CustomToolInput = z.object({
+  title: z.string().min(1).max(120),
+  instructions: z.string().min(1).max(12000),
+});
+
+const CUSTOM_PROMPT = [
+  "You are a flexible workplace productivity assistant.",
+  "The user describes a custom tool by title and gives instructions or input.",
+  "Do exactly what the instructions ask, in the spirit of the tool's title.",
+  "Reply in clear plain text with short labelled sections or dashed lists where helpful.",
+  "No markdown symbols, no invented facts, no placeholders.",
+].join(" ");
+
+async function callGateway(instructions: string, input: string) {
+  const apiKey = process.env["LOVABLE_API_KEY"];
+  if (!apiKey) throw new Error("AI is not configured for this app.");
+
+  const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Lovable-API-Key": apiKey,
+      "X-Lovable-AIG-SDK": "fetch",
+    },
+    body: JSON.stringify({
+      model: "openai/gpt-6-astra",
+      instructions,
+      input,
+      stream: true,
+      reasoning: { effort: "low", summary: "auto" },
+    }),
+  });
+
+  if (!res.ok || !res.body) {
+    const detail = await res.text().catch(() => "");
+    if (res.status === 429) {
+      throw new Error("Too many requests right now. Please try again in a moment.");
+    }
+    if (res.status === 402) {
+      throw new Error("AI credits are exhausted. Please add credits to keep generating.");
+    }
+    throw new Error(`AI request failed (${res.status}). ${detail.slice(0, 200)}`.trim());
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let text = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      if (!line.startsWith("data:")) continue;
+      const payload = line.slice(5).trim();
+      if (!payload || payload === "[DONE]") continue;
+      try {
+        const event = JSON.parse(payload) as {
+          type?: string;
+          delta?: string;
+          response?: { output_text?: string };
+        };
+        if (event.type === "response.output_text.delta" && typeof event.delta === "string") {
+          text += event.delta;
+        } else if (event.type === "response.completed" && !text) {
+          text = event.response?.output_text ?? "";
+        }
+      } catch {
+        // ignore keep-alive / non-JSON lines
+      }
+    }
+  }
+
+  return text.trim();
+}
+
+export const runCustomTool = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => CustomToolInput.parse(input))
+  .handler(async ({ data }) => {
+    const text = await callGateway(
+      CUSTOM_PROMPT,
+      `Custom tool title: ${data.title}\n\nInstructions / input:\n${data.instructions}`,
+    );
+    return { text };
+  });
+
 export const runTool = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => RunToolInput.parse(input))
   .handler(async ({ data }) => {

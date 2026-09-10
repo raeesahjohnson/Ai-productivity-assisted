@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check, NotebookPen, ListChecks, Search, Plus } from "lucide-react";
+import { CustomToolDialog } from "@/components/custom-tool-dialog";
 import { tools } from "@/lib/tools";
 
 export const Route = createFileRoute("/")({
@@ -66,6 +68,7 @@ const toneBg: Record<string, string> = {
 };
 
 function Dashboard() {
+  const [customOpen, setCustomOpen] = useState(false);
   return (
     <div className="max-w-[1200px] px-5 py-6 sm:px-8">
       <div className="grid animate-fade-up grid-cols-[minmax(0,1fr)] gap-4 sm:flex sm:flex-wrap sm:items-end sm:justify-between">
@@ -150,15 +153,32 @@ function Dashboard() {
           );
         })}
 
-        <div className="flex animate-fade-up flex-col items-start justify-center rounded-xl border-2 border-dashed border-input p-5">
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => setCustomOpen(true)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setCustomOpen(true);
+            }
+          }}
+          className="flex animate-fade-up cursor-pointer flex-col items-start justify-center rounded-xl border-2 border-dashed border-input p-5 text-left transition hover:-translate-y-0.5 hover:border-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+        >
           <div className="grid size-11 place-items-center rounded-lg bg-ink/5 text-muted-foreground">
             <Plus className="size-5" strokeWidth={1.75} />
           </div>
           <h3 className="mt-4 font-display font-semibold">Build a custom tool</h3>
           <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-            No tool for your workflow yet? Describe it and we'll scaffold a placeholder.
+            No tool for your workflow yet? Describe it and the AI will run it for you.
           </p>
-          <button className="mt-4 rounded-lg border border-input px-3 py-1.5 text-xs font-semibold hover:bg-ink/5">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setCustomOpen(true);
+            }}
+            className="mt-4 rounded-lg border border-input px-3 py-1.5 text-xs font-semibold hover:bg-ink/5"
+          >
             Create draft
           </button>
         </div>
@@ -193,6 +213,8 @@ function Dashboard() {
       <p className="mt-10 text-center text-xs text-muted-foreground">
         WorkOS AI · Placeholder pages pending feature build
       </p>
+
+      <CustomToolDialog open={customOpen} onOpenChange={setCustomOpen} />
     </div>
   );
 }
