@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check, NotebookPen, ListChecks, Search, Plus } from "lucide-react";
+import { CustomToolDialog } from "@/components/custom-tool-dialog";
 import { tools } from "@/lib/tools";
 
 export const Route = createFileRoute("/")({
