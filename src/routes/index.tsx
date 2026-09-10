@@ -68,6 +68,7 @@ const toneBg: Record<string, string> = {
 };
 
 function Dashboard() {
+  const [customOpen, setCustomOpen] = useState(false);
   return (
     <div className="max-w-[1200px] px-5 py-6 sm:px-8">
       <div className="grid animate-fade-up grid-cols-[minmax(0,1fr)] gap-4 sm:flex sm:flex-wrap sm:items-end sm:justify-between">
